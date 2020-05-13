@@ -22,7 +22,7 @@ def directoryask():
     if dirSelect == 1:
         print(colors.fg.orange, "Enter path of working directory...")
         os.chdir(str(input("select>> ")))
-        print("here is the dir", )
+        print("here goes your files :", '\n')
 
     elif dirSelect == 2:
         print("your working directory is", os.getcwd())
@@ -30,12 +30,13 @@ def directoryask():
     
 def selectOP():
     print(colors.fg.orange,"select the operation", "1. Rename", "2. Delete", "3. Copy", "4. Move", "5. Create new folder/s, file/s", "9. enter into a directory", "99. EXIT", sep="\n", end='\n\n')
-    print('\n')
+    print(colors.fg.green, '\n')
     selection = int(input("select>> "))
     showDirectories()
     return selection
 
 def showDirectories():
+    print('\n')
     filelist = os.listdir(os.curdir)
     filelist.sort()
     index = 1
@@ -43,6 +44,8 @@ def showDirectories():
         
         print(colors.fg.cyan,str(index) + ". " + i)
         index += 1
+    print('\n')
+    
 
 class operations:
 
@@ -61,6 +64,7 @@ class operations:
             os.rename (i, newname)
             print(colors.fg.green, i + " has been renamed as >> " + newname)
             
+            
     
     def delete(self):
         indexes = list(map(int, ((input("enter file indexes to delete>> ").split(" ")))))
@@ -72,6 +76,7 @@ class operations:
             except IsADirectoryError:
                 os.rmdir(i)
             print(colors.fg.green, "deleted ", i)
+            
     def copy(self):
         indexes = list(map(int, ((input("enter file indexes to copy>> ").split(" ")))))
         tocopy = list(map(lambda x: self.files[x - 1], indexes))
@@ -80,9 +85,10 @@ class operations:
             print(str(tocopy.index(i) + 1) + "/" + str(len(indexes)))
             print("copying", i)
             path = str(input("where to copy (path/same) >> "))
-            command = 'cp -arv ' + copypath + " " + path
+            command = 'cp -arv ' + i + " " + path
             os.system(command)
             print(colors.fg.green, i, "has been copyied to", path)
+            
 
 
     def move(self):
@@ -92,6 +98,7 @@ class operations:
             print(colors.fg.green, str(tomove.index(i) + 1) + "/" + str(len(indexes)))
             command = "mv " + i + " " + input("where to move (path/same) >> ")
             os.system(command)
+            
 
     def createdir(self):
         print(colors.fg.orange, "")
@@ -107,6 +114,7 @@ class operations:
                 command = 'cat > ' + filename
                 os.system(command)
                 print(colors.fg.green, filename, "has been created")
+            
 
                 
     def changefolder(self):
@@ -115,6 +123,7 @@ class operations:
 def changeCWD():
     os.chdir(input("Enter the path>> "))
     print("working directory is changed to", os.getcwd())
+    print('\n')
 
 
 
