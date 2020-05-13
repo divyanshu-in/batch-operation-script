@@ -46,28 +46,31 @@ def showDirectories():
 
 class operations:
 
+    def __init__(self, files):
+        self.files = files
+
     showDirectories()        
 
-    def rename(files):
+    def rename(self):
 
         indexes = list(map(int, ((input("enter file indexes to rename>> ").split(" ")))))
-        torename = list(map(lambda x: files[x - 1], indexes))
+        torename = list(map(lambda x: self.files[x - 1], indexes))
         for i in torename:
             newname = str(input("rename " + i + "as>> " ))
             os.rename (i, newname)
     
-    def delete(files):
+    def delete(self):
         indexes = list(map(int, ((input("enter file indexes to delete>> ").split(" ")))))
-        todelete = list(map(lambda x: files[x - 1], indexes))
+        todelete = list(map(lambda x: self.files[x - 1], indexes))
         for i in todelete:
             try:
                 os.remove(i)
             except IsADirectoryError:
                 os.rmdir(i)
 
-    def copy(files):
+    def copy(self):
         indexes = list(map(int, ((input("enter file indexes to copy>> ").split(" ")))))
-        tocopy = list(map(lambda x: files[x - 1], indexes))
+        tocopy = list(map(lambda x: self.files[x - 1], indexes))
 
         for i in tocopy:
 
@@ -76,14 +79,14 @@ class operations:
             os.system(command)
 
 
-    def move(files):
+    def move(self):
         indexes = list(map(int, ((input("enter file indexes to move>> ").split(" ")))))
-        tomove = list(map(lambda x: files[x - 1], indexes))
+        tomove = list(map(lambda x: self.files[x - 1], indexes))
         for i in tomove:
             command = "mv " + i + " " + input("where to move (path/same) >> ")
             os.system(command)
 
-    def createdir(files):
+    def createdir(self):
         print(colors.fg.orange, "")
         ask = int(input("what do you want to create 1. Folders   2. Files  >> "))
         index = int(input("how many folders to create>> "))
@@ -94,7 +97,7 @@ class operations:
                 command = 'cat > ' + input("Enter name of file along with extension>> ")
                 os.system(command)
                 
-    def changefolder(files):
+    def changefolder(self):
         changeCWD()
 
 def changeCWD():
@@ -111,14 +114,14 @@ if __name__ == "__main__":
 
         oprselection = selectOP()
         if oprselection ==1:
-            operations.rename(filelist)
+            operations(filelist).rename()
         elif oprselection == 2:
-            operations.delete(filelist)
+            operations(filelist).delete()
         elif oprselection == 3:
-            operations.copy(filelist)
+            operations(filelist).copy()
         elif oprselection == 4:
-            operations.move(filelist)
+            operations(filelist).move()
         elif oprselection == 5:
-            operations.createdir(filelist)
+            operations(filelist).createdir()
         elif oprselection == 99:
             break
