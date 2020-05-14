@@ -12,6 +12,15 @@ color = {
     "yellow": "\033[93m",
 }
 
+#colors off
+# color = {
+#     "red": "",
+#     "green": "",
+#     "orange": "",
+#     "purple": "",
+#     "cyan": "",
+#     "yellow": "",
+# }
 
 def show_dirs():
     print(color["cyan"] + "Files in the current directory")
@@ -33,7 +42,7 @@ def show_dirs():
 
     if scr_width < mlen:
         mlen = scr_width
-
+        
     line = ""
     lst = []
     for count, _file in enumerate(filelist, start=1):
