@@ -12,16 +12,6 @@ color = {
     "yellow": "\033[93m",
 }
 
-#colors off
-# color = {
-#     "red": "",
-#     "green": "",
-#     "orange": "",
-#     "purple": "",
-#     "cyan": "",
-#     "yellow": "",
-# }
-
 def show_dirs():
     print(color["cyan"] + "Files in the current directory")
     filelist = os.listdir(os.getcwd())
