@@ -11,49 +11,63 @@ color = {
     "yellow": "\033[93m",
 }
 
+#colors off
+# color = {
+#     "red": "",
+#     "green": "",
+#     "orange": "",
+#     "purple": "",
+#     "cyan": "",
+#     "yellow": "",
+# }
 
 def show_dirs():
     filelist = os.listdir(os.getcwd())
     filelist.sort()
-
-    max_len = -1
-    for fl in filelist:
-        if len(fl) > max_len:
-            max_len = len(fl)
-            mlen = max_len + 1
+    ind = len(filelist)
+    if ind >= 1000:
+        ind = 4
+    elif ind >= 100:
+        ind = 3
+    elif ind >= 10:
+        ind = 2
+    else:
+        ind = 1
+        
+    scr_width = int(os.popen("stty size", "r").read().split()[1])
+    mlen = max(len(word) for word in filelist) + 1
 
     print(color["cyan"] + "Files in the current directory")
 
-    scr_width = int(os.popen("stty size", "r").read().split()[1])
     if scr_width < mlen:
         mlen = scr_width
-
+        
     line = ""
-    for count, _file in enumerate(filelist):
+    lst = []
+    for count, _file in enumerate(filelist, start=1):
         if os.path.isdir(_file):
             _file = _file + os.sep
-            st = color["green"] + "{0:>1}. {1:<{mlen}}".format(
-                str(count + 1), _file, mlen=mlen
-            )
-            if len(line) % scr_width > len(st):
-                line = line + st
+            st = "[{0:>2}] {1:<{mlen}}".format(str(count), _file, mlen=mlen)
+            if scr_width - (len(line) % scr_width) > len(st):
+                line = line + color["cyan"] + st
             else:
-                line = line + "\n" + st
+                lst.append(line)
+                line = color["cyan"] + st
+                
         else:
-            st = color["cyan"] + "{0:>1}. {1:<{mlen}}".format(
-                str(count + 1), _file, mlen=mlen
-            )
-            if len(line) % scr_width > len(st):
-                line = line + st
+            st = "[{0:>2}] {1:<{mlen}}".format(str(count), _file, mlen=mlen)
+            if scr_width - (len(line) % scr_width) > len(st):
+                line = line + color["green"] + st
             else:
-                line = line + "\n" + st
-    print(line)
+                lst.append(line)
+                line = color["green"] + st
+                
+    print("\n".join(lst))
 
 
 def directory_ask():
     print(
-        color["red"],
-        "Enter directory name:",
+        color["red"] + "Enter directory name:",
         color["green"],
         " 1. Custom directory",
         " 2. Current directory",
