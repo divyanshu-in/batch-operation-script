@@ -11,7 +11,7 @@ color = {
     "yellow": "\033[93m",
 }
 
-#colors off
+# colors off
 # color = {
 #     "red": "",
 #     "green": "",
@@ -20,6 +20,7 @@ color = {
 #     "cyan": "",
 #     "yellow": "",
 # }
+
 
 def show_dirs():
     filelist = os.listdir(os.getcwd())
@@ -33,7 +34,7 @@ def show_dirs():
         ind = 2
     else:
         ind = 1
-        
+
     scr_width = int(os.popen("stty size", "r").read().split()[1])
     mlen = max(len(word) for word in filelist) + 1
 
@@ -41,7 +42,7 @@ def show_dirs():
 
     if scr_width < mlen:
         mlen = scr_width
-        
+
     line = ""
     lst = []
     for count, _file in enumerate(filelist, start=1):
@@ -53,7 +54,7 @@ def show_dirs():
             else:
                 lst.append(line)
                 line = color["cyan"] + st
-                
+
         else:
             st = "[{0:>2}] {1:<{mlen}}".format(str(count), _file, mlen=mlen)
             if scr_width - (len(line) % scr_width) > len(st):
@@ -61,7 +62,7 @@ def show_dirs():
             else:
                 lst.append(line)
                 line = color["green"] + st
-                
+
     print("\n".join(lst))
 
 
@@ -77,8 +78,8 @@ def directory_ask():
     dir_select = int(input("select>> "))
 
     if dir_select == 1:
-        print(color["orange"], "Enter path of working directory...")
-        os.chdir(str(input("select>> ")))
+        print(color["orange"] + "Enter path of working directory...")
+        os.chdir(str(input("path>> ")))
         print("here is the dir", os.getcwd())
 
     elif dir_select == 2:
@@ -113,20 +114,49 @@ class Operations:
     def __init__(self, files):
         self.files = files
 
-    def rename(self):
-
-        indexes = list(
-            map(int, ((input("enter file indexes to rename>> ").split(" "))))
+    def get_index(self):
+        max_i = len(self.files)
+        indexes = []
+        print(
+            "Enter indexes eg. 3 6\n"
+            + "Enter range eg. 2-9\n"
+            + "Enter 'all' to select all files"
         )
+        inp = input(">>")
+        if inp == "all":
+            for i in range(1, max_i + 1):
+                indexes.append(i)
+        else:
+            for i in inp.split(" "):
+                try:
+                    indexes.append(int(i))
+                except ValueError:
+                    i = i.split("-")
+                    for _ in range(int(i[0]), int(i[1]) + 1):
+                        try:
+                            indexes.append(_)
+                        except ValueError:
+                            print("ERROR enter proper values:")
+                            return None
+        return indexes
+
+    def rename(self):
+        print("Enter file indexes to rename>> ")
+        indexes = self.get_index()
+        if indexes == None:
+            print("No file selected")
+            return 0
         torename = list(map(lambda x: self.files[x - 1], indexes))
         for _file in torename:
             newname = str(input("rename " + _file + "as>> "))
             os.rename(_file, newname)
 
     def delete(self):
-        indexes = list(
-            map(int, ((input("enter file indexes to delete>> ").split(" "))))
-        )
+        print("Enter file indexes to delete>> ")
+        indexes = self.get_index()
+        if indexes == None:
+            print("No file selected")
+            return 0
         todelete = list(map(lambda x: self.files[x - 1], indexes))
         for i in todelete:
             try:
@@ -135,9 +165,11 @@ class Operations:
                 shutil.rmtree(i, ignore_errors=True)
 
     def copy(self):
-        indexes = list(
-            map(int, ((input("enter file indexes to copy>> ").split(" "))))
-        )
+        print("Enter file indexes to copy>> ")
+        indexes = self.get_index()
+        if indexes == None:
+            print("No file selected")
+            return 0
         tocopy = list(map(lambda x: self.files[x - 1], indexes))
 
         for i in tocopy:
@@ -147,9 +179,11 @@ class Operations:
             os.system(command)
 
     def move(self):
-        indexes = list(
-            map(int, ((input("enter file indexes to move>> ").split(" "))))
-        )
+        print("Enter file indexes to move>> ")
+        indexes = self.get_index()
+        if indexes == None:
+            print("No file selected")
+            return 0
         tomove = list(map(lambda x: self.files[x - 1], indexes))
         for i in tomove:
             command = "mv " + i + " " + input("where to move (path/same) >> ")
