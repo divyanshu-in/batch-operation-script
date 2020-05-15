@@ -14,7 +14,7 @@ color = {
 
 print(
     color["purple"],
-    """
+    r"""
  | |__   __ _| |_ ___| |__     ___  _ __   ___ _ __ __ _| |_(_) ___  _ __  
  | '_ \ / _` | __/ __| '_ \   / _ \| '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \ 
  | |_) | (_| | || (__| | | | | (_) | |_) |  __/ | | (_| | |_| | (_) | | | |
@@ -44,7 +44,7 @@ def show_dirs():
     else:
         ind = 1
 
-    scr_width = int(os.popen("stty size", "r").read().split()[1])
+    scr_width = int(os.get_terminal_size()[0])
     mlen = max(len(word) for word in filelist) + 1
     cols = scr_width // mlen
 
@@ -82,34 +82,33 @@ def show_dirs():
 def navmodedir():
     print("your current working directory is" + os.getcwd())
     while True:
-        try:
-            print("files --->>")
-            show_dirs()
-            print(
-                color["orange"],
-                "enter directory number to move inside ",
-                "press u to exit current directory",
-                "x to exit nav mode ->>>",
-                "",
-                sep="\n",
-            )
-            dir_action = input("Select >> ")
-            if dir_action.lower() == "u":
-                foldername = os.path.split(os.getcwd())[0]
-                os.chdir(foldername)
-                show_dirs()
-                print(color["cyan"], "directory ->>> ", os.getcwd())
-            elif dir_action.lower() == "x":
-                break
-            else:
-                _files = os.listdir(os.getcwd())
-                _files.sort()
-                filename = _files[int(dir_action) - 1]
-                print(filename)
-                os.chdir(str(os.getcwd()) + "/" + filename)
-                print(color["cyan"], "directory ->>> ", os.getcwd())
-        except:
+        print("files --->>")
+        show_dirs()
+        print(
+            color["orange"],
+            "enter directory indexto move inside ",
+            "press u to exit current directory",
+            "x to exit nav mode ->>>",
+            "",
+            sep="\n",
+        )
+        dir_action = input("Select >> ").lower()
+        if dir_action == "u":
+            foldername = os.path.split(os.getcwd())[0]
+            os.chdir(foldername)
+            print(color["cyan"], "directory ->>> ", os.getcwd())
+        elif dir_action == "x":
+            break
+        elif dir_action not in ("u", "x"):
+            _files = os.listdir(os.getcwd())
+            _files.sort()
+            filename = _files[int(dir_action) - 1]
+            print(filename)
+            os.chdir(str(os.getcwd()) + os.sep + filename)
+            print(color["cyan"], "directory ->>> ", os.getcwd())
+        else:
             print("INVALID INPUT   !!! ")
+            continue
 
 
 def directory_ask(change_dir=False):
@@ -188,7 +187,7 @@ class Operations:
     def rename(self):
         print("Enter file indexes to rename")
         indexes = self.get_index()
-        if indexes == None:
+        if indexes is None:
             print(color["red"] + "ERROR No file selected")
             return 0
         torename = list(map(lambda x: self.files[x - 1], indexes))
@@ -199,7 +198,7 @@ class Operations:
     def delete(self):
         print("Enter file indexes to delete")
         indexes = self.get_index()
-        if indexes == None:
+        if indexes is None:
             print(color["red"] + "ERROR No file selected")
             return 0
         todelete = list(map(lambda x: self.files[x - 1], indexes))
@@ -212,7 +211,7 @@ class Operations:
     def copy(self):
         print("Enter file indexes to copy")
         indexes = self.get_index()
-        if indexes == None:
+        if indexes is None:
             print(color["red"] + "ERROR No file selected")
             return 0
         tocopy = list(map(lambda x: self.files[x - 1], indexes))
@@ -223,7 +222,7 @@ class Operations:
     def move(self):
         print("Enter file indexes to move")
         indexes = self.get_index()
-        if indexes == None:
+        if indexes is None:
             print(color["red"] + "ERROR No file selected")
             return 0
         tomove = list(map(lambda x: self.files[x - 1], indexes))
