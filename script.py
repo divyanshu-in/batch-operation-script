@@ -178,7 +178,7 @@ class Operations:
         )
         ask = int(input(">> "))
         index = int(input("How many folders to create>> "))
-        for i in range(index + 1):
+        for i in range(index):
             if ask == 1:
                 os.mkdir(input("Enter name of folder [{}]>> ".format(i + 1)))
             elif ask == 2:
