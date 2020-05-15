@@ -60,15 +60,46 @@ def show_dirs():
         lst.append(line)
     print("\n".join(lst))
 
+def navmodedir():
+    print("your current working directory is" + os.getcwd())
+    while True:
+        try:
+            print("files --->>")
+            show_dirs()
+            # print("press x to exit nav mode with selected working directory".upper())
+            print(color['orange'], "enter directory number to move inside ", "press u to exit current directory", "x to exit nav mode ->>>","", sep='\n')
+            dir_action = input("Select >> ")
+            if dir_action.lower() == "u":
+                foldername = os.path.split(os.getcwd())[0]
+                os.chdir(foldername)
+                show_dirs()
+                print(color["cyan"], "directory ->>> ", os.getcwd())
+            elif dir_action.lower() == "x":
+                break
+            else:
+                _files = os.listdir(os.getcwd())
+                _files.sort()
+                filename = _files[int(dir_action) - 1]
+                print(filename)
+                os.chdir(str(os.getcwd()) + "/" + filename)
+                print(color["cyan"], "directory ->>> ", os.getcwd())
+        except:
+            print("INVALID INPUT   !!! ")
+
 
 def directory_ask(change_dir=False):
     if not change_dir:
-        a = input(color["red"] + "Stay in {} [y]/n? ".format(os.getcwd()))
+        print(color["red"] , "Stay in {} [y]/n?".format(os.getcwd()) ,"or", "press r to enter nav mode ", sep='\n')
+        a = input(color["red"] + "Select >> ")
         if a.lower() == "n":
             print(color["orange"] + "Enter full path of the directory...")
             os.chdir(str(input("path>> ")))
+        elif a.lower() == "r":
+            navmodedir()
         else:
             pass
+        
+
     else:
         print(color["orange"] + "Enter full path of the directory...")
         os.chdir(str(input("path>> ")))
