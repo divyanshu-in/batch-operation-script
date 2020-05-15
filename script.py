@@ -3,7 +3,6 @@ import os
 import shutil
 
 
-
 color = {
     "red": "\033[31m",
     "green": "\033[32m",
@@ -13,20 +12,24 @@ color = {
     "yellow": "\033[93m",
 }
 
-print(color["purple"], 
-""""
-| |__   __ _| |_ ___| |__     ___  _ __   ___ _ __ __ _| |_(_) ___  _ __  
-| '_ \ / _` | __/ __| '_ \   / _ \| '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \ 
-| |_) | (_| | || (__| | | | | (_) | |_) |  __/ | | (_| | |_| | (_) | | | |
-|_.__/ \__,_|\__\___|_| |_|  \___/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|
-                                  |_|                                     
-               _       _   
- ___  ___ _ __(_)_ __ | |_ 
-/ __|/ __| '__| | '_ \| __|
-\__ \ (__| |  | | |_) | |_ 
-|___/\___|_|  |_| .__/ \__|
+print(
+    color["purple"],
+    """
+ | |__   __ _| |_ ___| |__     ___  _ __   ___ _ __ __ _| |_(_) ___  _ __  
+ | '_ \ / _` | __/ __| '_ \   / _ \| '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \ 
+ | |_) | (_| | || (__| | | | | (_) | |_) |  __/ | | (_| | |_| | (_) | | | |
+ |_.__/ \__,_|\__\___|_| |_|  \___/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|
+                                   |_|                                     
+                _       _   
+  ___  ___ _ __(_)_ __ | |_ 
+ / __|/ __| '__| | '_ \| __|
+ \__ \ (__| |  | | |_) | |_ 
+ |___/\___|_|  |_| .__/ \__|
                 |_|    
-""")
+    """,
+)
+
+
 def show_dirs():
     print(color["cyan"] + "Files in the current directory")
     filelist = os.listdir(os.getcwd())
@@ -47,7 +50,7 @@ def show_dirs():
 
     if scr_width < mlen:
         mlen = scr_width
-        
+
     line = ""
     lst = []
     for count, _file in enumerate(filelist, start=1):
@@ -75,13 +78,21 @@ def show_dirs():
         lst.append(line)
     print("\n".join(lst))
 
+
 def navmodedir():
     print("your current working directory is" + os.getcwd())
     while True:
         try:
             print("files --->>")
             show_dirs()
-            print(color['orange'], "enter directory number to move inside ", "press u to exit current directory", "x to exit nav mode ->>>","", sep='\n')
+            print(
+                color["orange"],
+                "enter directory number to move inside ",
+                "press u to exit current directory",
+                "x to exit nav mode ->>>",
+                "",
+                sep="\n",
+            )
             dir_action = input("Select >> ")
             if dir_action.lower() == "u":
                 foldername = os.path.split(os.getcwd())[0]
@@ -103,7 +114,13 @@ def navmodedir():
 
 def directory_ask(change_dir=False):
     if not change_dir:
-        print(color["red"] , "Stay in {} [y]/n?".format(os.getcwd()) ,"or", "press r to enter navigation mode ", sep='\n')
+        print(
+            color["red"],
+            "Stay in {} [y]/n?".format(os.getcwd()),
+            "or",
+            "press r to enter navigation mode ",
+            sep="\n",
+        )
         a = input(color["red"] + "Select >> ")
         if a.lower() == "n":
             print(color["orange"] + "Enter full path of the directory...")
@@ -112,7 +129,6 @@ def directory_ask(change_dir=False):
             navmodedir()
         else:
             pass
-        
 
     else:
         print(color["orange"] + "Enter full path of the directory...")
