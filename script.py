@@ -12,27 +12,10 @@ color = {
     "yellow": "\033[93m",
 }
 
-print(
-    color["purple"],
-    r"""
- | |__   __ _| |_ ___| |__     ___  _ __   ___ _ __ __ _| |_(_) ___  _ __  
- | '_ \ / _` | __/ __| '_ \   / _ \| '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \ 
- | |_) | (_| | || (__| | | | | (_) | |_) |  __/ | | (_| | |_| | (_) | | | |
- |_.__/ \__,_|\__\___|_| |_|  \___/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|
-                                   |_|                                     
-                _       _   
-  ___  ___ _ __(_)_ __ | |_ 
- / __|/ __| '__| | '_ \| __|
- \__ \ (__| |  | | |_) | |_ 
- |___/\___|_|  |_| .__/ \__|
-                |_|    
-    """,
-)
 
-
-def show_dirs():
+def show_dirs(path=os.getcwd()):
     print(color["cyan"] + "Files in the current directory")
-    filelist = os.listdir(os.getcwd())
+    filelist = os.listdir(path)
     filelist.sort()
     ind = len(filelist)
     if ind >= 1000:
@@ -83,7 +66,7 @@ def navmodedir():
     print("your current working directory is" + os.getcwd())
     while True:
         print("files --->>")
-        show_dirs()
+        show_dirs(os.getcwd())
         print(
             color["orange"],
             "enter directory indexto move inside ",
@@ -132,7 +115,7 @@ def directory_ask(change_dir=False):
     else:
         print(color["orange"] + "Enter full path of the directory...")
         os.chdir(str(input("path>> ")))
-    show_dirs()
+    show_dirs(os.getcwd())
 
 
 def select_op():
@@ -150,7 +133,7 @@ def select_op():
         sep="\n",
     )
     selection = int(input("select>> "))
-    show_dirs()
+    show_dirs(os.getcwd())
     return selection
 
 
@@ -250,9 +233,25 @@ class Operations:
                     print(color["red"] + "ERROR File already exists")
 
 
-if __name__ == "__main__":
+def main():
+    print(
+        color["purple"],
+        r"""
+ | |__   __ _| |_ ___| |__     ___  _ __   ___ _ __ __ _| |_(_) ___  _ __  
+ | '_ \ / _` | __/ __| '_ \   / _ \| '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \ 
+ | |_) | (_| | || (__| | | | | (_) | |_) |  __/ | | (_| | |_| | (_) | | | |
+ |_.__/ \__,_|\__\___|_| |_|  \___/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|
+                                   |_|                                     
+                _       _   
+  ___  ___ _ __(_)_ __ | |_ 
+ / __|/ __| '__| | '_ \| __|
+ \__ \ (__| |  | | |_) | |_ 
+ |___/\___|_|  |_| .__/ \__|
+                |_|    
+        """,
+    )
     while True:
-        directory_ask()
+        directory_ask(False)
         filelist = os.listdir(os.getcwd())
         filelist.sort()
         oper_files = Operations(filelist)
@@ -271,10 +270,17 @@ if __name__ == "__main__":
             elif oprselection == 6:
                 oper_files.enter_dir()
             elif oprselection == 9:
-                directory_ask(change_dir=True)
+                directory_ask(True)
             elif oprselection == 99:
                 break
             else:
                 continue
         except IndexError:
             continue
+
+
+if __name__ == "__main__":
+    main()
+
+else:
+    pass
