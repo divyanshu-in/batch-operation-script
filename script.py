@@ -37,6 +37,7 @@ def show_dirs(path=os.getcwd()):
     line = ""
     lst = []
     for count, _file in enumerate(filelist, start=1):
+        # directories
         if os.path.isdir(_file):
             _file = _file + os.sep
             st = "[{0:>{ind}}] {1:<{mlen}}".format(
@@ -47,7 +48,17 @@ def show_dirs(path=os.getcwd()):
             else:
                 lst.append(line)
                 line = color["cyan"] + st
-
+        # executeable files
+        elif os.access(_file, os.X_OK): 
+            st = "[{0:>{ind}}] {1:<{mlen}}".format(
+                str(count), _file, mlen=mlen, ind=ind
+            )
+            if scr_width - ((len(line) - cols * 5) % scr_width) > len(st):
+                line = line + color["orange"] + st
+            else:
+                lst.append(line)
+                line = color["orange"] + st
+        # other files
         else:
             st = "[{0:>{ind}}] {1:<{mlen}}".format(
                 str(count), _file, mlen=mlen, ind=ind
