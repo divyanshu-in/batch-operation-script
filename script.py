@@ -28,8 +28,12 @@ def show_dirs(path=os.getcwd()):
         ind = 1
 
     scr_width = int(os.get_terminal_size()[0])
-    mlen = max(len(word) for word in filelist) + 1
-    cols = scr_width // mlen
+    print(scr_width)
+    try:
+        mlen = max(len(word) for word in filelist) + 1
+    except ValueError:
+        mlen = 1
+    cols = (scr_width // mlen)
 
     if scr_width < mlen:
         mlen = scr_width
@@ -43,7 +47,7 @@ def show_dirs(path=os.getcwd()):
             st = "[{0:>{ind}}] {1:<{mlen}}".format(
                 str(count), _file, mlen=mlen, ind=ind
             )
-            if scr_width - ((len(line) - cols * 5) % scr_width) > len(st):
+            if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
                 line = line + color["cyan"] + st
             else:
                 lst.append(line)
@@ -53,7 +57,7 @@ def show_dirs(path=os.getcwd()):
             st = "[{0:>{ind}}] {1:<{mlen}}".format(
                 str(count), _file, mlen=mlen, ind=ind
             )
-            if scr_width - ((len(line) - cols * 5) % scr_width) > len(st):
+            if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
                 line = line + color["orange"] + st
             else:
                 lst.append(line)
@@ -63,7 +67,7 @@ def show_dirs(path=os.getcwd()):
             st = "[{0:>{ind}}] {1:<{mlen}}".format(
                 str(count), _file, mlen=mlen, ind=ind
             )
-            if scr_width - ((len(line) - cols * 5) % scr_width) > len(st):
+            if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
                 line = line + color["green"] + st
             else:
                 lst.append(line)
@@ -76,7 +80,6 @@ def show_dirs(path=os.getcwd()):
 def navmodedir():
     print("your current working directory is" + os.getcwd())
     while True:
-        print("files --->>")
         show_dirs(os.getcwd())
         print(
             color["orange"],
@@ -224,7 +227,8 @@ class Operations:
             path = input("where to move (path/same) >> ")
             shutil.move(i, path)
 
-    def createdir(self):
+    @staticmethod
+    def createdir():
         print(
             color["orange"]
             + "Select 1. to create Directories\n"
