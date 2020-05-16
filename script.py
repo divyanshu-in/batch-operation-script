@@ -28,8 +28,11 @@ def show_dirs(path=os.getcwd()):
         ind = 1
 
     scr_width = int(os.get_terminal_size()[0])
-    mlen = max(len(word) for word in filelist) + 1
-    cols = scr_width // mlen
+    try:
+        mlen = max(len(word) for word in filelist) + 1
+    except ValueError:
+        mlen = 1
+    cols = (scr_width // mlen) -1
 
     if scr_width < mlen:
         mlen = scr_width
@@ -76,7 +79,6 @@ def show_dirs(path=os.getcwd()):
 def navmodedir():
     print("your current working directory is" + os.getcwd())
     while True:
-        print("files --->>")
         show_dirs(os.getcwd())
         print(
             color["orange"],
@@ -224,7 +226,8 @@ class Operations:
             path = input("where to move (path/same) >> ")
             shutil.move(i, path)
 
-    def createdir(self):
+    @staticmethod
+    def createdir():
         print(
             color["orange"]
             + "Select 1. to create Directories\n"
