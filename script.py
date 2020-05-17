@@ -223,14 +223,17 @@ class Operations:
         indexes = []
         print(
             color["yellow"]
-            + "Enter indexes eg. 3 6\n"
-            + "Enter range eg. 2-9\n"
+            + "Enter indexes eg. '7' or '3 6'\n"
+            + "Enter range eg. '2-9'\n"
             + "Enter 'all' to select all files"
+            + "Enter 'x' to exit"
         )
         inp = input(">> ")
         if inp.lower().strip() == "all":
             for ind in range(1, max_ind + 1):
                 indexes.append(ind)
+        elif inp.lower().strip() == "x":
+            return -1
         else:
             for ind in inp.split(" "):
                 try:
@@ -241,7 +244,6 @@ class Operations:
                         try:
                             indexes.append(i)
                         except ValueError:
-                            print(color["red"] + "ERROR enter proper values:")
                             return None
         return indexes
 
@@ -250,15 +252,18 @@ class Operations:
             print(color["yellow"] + "Enter file indexes to rename")
             indexes = self.get_index()
             if indexes is None:
-                print(color["red"] + "ERROR No file selected")
+                print(color["red"] + "ERROR No file selected"+color["reset"])
                 continue
+            elif indexes == -1:
+                break
+            print(color["yellow"])
             dont_over = (
                 input("Overwrite prexisting files [y]/n?").strip().lower()
                 == "n"
             )
             torename = list(map(lambda x: self.files[x - 1], indexes))
             for _file in torename:
-                newname = str(input("rename " + _file + "as>> "))
+                newname = str(input("Rename '" + _file + "' as>> "))
                 if dont_over:
                     if os.path.exists(newname):
                         if (
@@ -273,17 +278,32 @@ class Operations:
             break
 
     def delete(self):
-        print("Enter file indexes to delete")
-        indexes = self.get_index()
-        if indexes is None:
-            print(color["red"] + "ERROR No file selected")
-            return 0
-        todelete = list(map(lambda x: self.files[x - 1], indexes))
-        for i in todelete:
-            try:
-                os.remove(i)
-            except IsADirectoryError:
-                shutil.rmtree(i, ignore_errors=True)
+        while True:
+            print("Enter file indexes to delete")
+            indexes = self.get_index()
+            if indexes is None:
+                print(color["red"] + "ERROR No file selected"+color["reset"])
+                continue
+            elif indexes == -1:
+                break
+            todelete = list(map(lambda x: self.files[x - 1], indexes))
+            print(color["yellow"])
+            del_confirm = (
+                input("Ask confirmaton to delete y/[n]?").strip().lower()
+                == "y"
+            )
+            for i in todelete:
+                if os.path.isdir(i):
+                    if del_confirm:
+                        if (input("Delete directory "+ i +" [y]/n?").strip().lower() == "n"):
+                            continue
+                    shutil.rmtree(i, ignore_errors=True)
+                else:
+                    if del_confirm:
+                        if (input("Delete file "+ i +" [y]/n?").strip().lower() == "n"):
+                            continue
+                    os.remove(i)
+            break
 
     def copy(self):
         print("Enter file indexes to copy")
