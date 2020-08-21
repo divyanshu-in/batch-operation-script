@@ -14,6 +14,309 @@ color = {
     "reset": "\033[0m",
 }
 
+class Interactive_operations:
+    def __init__(self,files):
+        self.files = files
+    
+    def move(self):
+        if not self.files:
+            print(color["red"] + "ERROR No file selected")
+            return 0
+        tomove = self.files
+        for i in tomove:
+            path = input("where to move (path/same) >> ")
+            shutil.move(i, path)
+
+    def rename(self):
+        while True:
+            if not self.files:
+                print(color["red"] + "ERROR No file selected" + color["reset"])
+                break
+            print(color["yellow"])
+            dont_over = (
+                input("Overwrite prexisting files [y]/n?").strip().lower()
+                == "n"
+            )
+            torename = self.files
+            for _file in torename:
+                newname = str(input("Rename '" + _file + "' as>> "))
+                if dont_over:
+                    if os.path.exists(newname):
+                        if (
+                            input(_file + " already exists overwrite y/[n]?")
+                            .strip()
+                            .lower()
+                            == "y"
+                        ):
+                            try:
+                                os.rename(_file, newname)
+                            except IsADirectoryError as e:
+                                print(color["red"] + e + color["yellow"])
+                            except NotADirectoryError as e:
+                                print(color["red"] + e + color["yellow"])
+
+                        else:
+                            continue
+                else:
+                    try:
+                        os.rename(_file, newname)
+                    except IsADirectoryError as e:
+                        print(color["red"] + e + color["yellow"])
+                    except NotADirectoryError as e:
+                        print(color["red"] + e + color["yellow"])
+            break
+
+    def delete(self):
+        while True:
+            if len(self.files) is None:
+                print(color["red"] + "ERROR No file selected" + color["reset"])
+                continue
+            if len(self.files) == -1:
+                break
+
+            todelete = self.files
+            print(color["yellow"])
+            del_confirm = (
+                input("Ask confirmaton to delete y/[n]?").strip().lower() == "y"
+            )
+            deleted = []
+            for i in todelete:
+                if os.path.isdir(i):
+                    if del_confirm:
+                        if (
+                            input("Delete directory " + i + " [y]/n?")
+                            .strip()
+                            .lower()
+                            == "n"
+                        ):
+                            continue
+                    shutil.rmtree(i, ignore_errors=True)
+                    deleted.append(i)
+                else:
+                    if del_confirm:
+                        if (
+                            input("Delete file " + i + " [y]/n?")
+                            .strip()
+                            .lower()
+                            == "n"
+                        ):
+                            continue
+                    os.remove(i)
+                    deleted.append(i)
+            break
+        
+        return deleted
+
+    def copy(self):
+        if self.files is None:
+            print(color["red"] + "ERROR No file selected")
+            return 0
+        tocopy = self.files
+        for i in tocopy:
+            path = str(input("where to copy (path/same) >> "))
+            shutil.copy(i, path)
+
+    @staticmethod
+    def create():
+        print(
+            color["yellow"]
+            + "Select 1. to create Directories\n"
+            + "       2. to create files\n"
+        )
+        ask = int(input(">> "))
+        index = int(input("How many folders to create>> "))
+        for i in range(index):
+            if ask == 1:
+                os.mkdir(input("Enter name of folder [{}]>> ".format(i + 1)))
+            elif ask == 2:
+                fname = input("Enter name of file along with extension>> ")
+                if not os.path.exists(fname):
+                    with open(fname, "w+"):
+                        pass
+                else:
+                    print(color["red"] + "ERROR File already exists")
+
+def selection_pointer(isSelected):
+    temp = color['reset']+"["+color['green']+"{0:>{ind}}"+ color['reset'] + '] '
+    return temp.format("*" if isSelected else " ", ind=1)
+
+def interactive_show_dirs(path=os.getcwd()):
+    """
+    opens a terminal to use all operation sin an interactive way.
+
+    Parameters:
+    path (str): Path of the directory (default = os.getcwd())
+    """
+    print(color["blue"]+'Contents of the directory')
+    filelist = os.listdir(path)
+    filelist.sort(key=lambda x: x.lower())
+    # index padding
+    # ind = len(filelist)
+    # if ind >= 1000:
+    #     ind = 4
+    # elif ind >= 100:
+    #     ind = 3
+    # elif ind >= 10:
+    #     ind = 2
+    # else:
+    #     ind = 1
+
+    scr_width = int(os.get_terminal_size()[0])
+    try:
+        mlen = (
+            max(
+                len(word) + 1 if os.path.isdir(word) else len(word)
+                for word in filelist
+            )
+            + 1
+        )
+    except ValueError:
+        mlen = 1
+    cols = scr_width // mlen
+    
+    noOfColumns = scr_width // (mlen + 5)
+    
+    if scr_width < mlen:
+        mlen = scr_width
+
+    selected__files = []
+    currentIndex = 0
+
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        ####################### DISPLAYING FILES ######################
+        line = ""
+        lst = []
+        for _file in filelist:
+            last = True  # last line
+            # directories(cyan)
+            if os.path.isdir(path + os.sep + _file):
+                _fileM = _file + os.sep
+                st = selection_pointer(_file in selected__files)+color['reset' if filelist[currentIndex] == _file else 'cyan'] +"{0:<{mlen}}".format(_fileM,mlen=mlen)
+                # st = "({0:>{ind}} {1:<{mlen}}".format(
+                #     str(count), _file, mlen=mlen, ind=ind
+                # )
+                if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
+                    line = line + st
+                else:
+                    lst.append(line)
+                    line = st
+                    last = False
+            # executeable files(yellow)
+            elif os.access(path + os.sep + _file, os.X_OK):
+
+                st = selection_pointer(_file in selected__files)+color['reset' if filelist[currentIndex] == _file else 'yellow'] + "{0:<{mlen}}".format(_file, mlen=mlen)
+
+                if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
+                    line = line+ st
+                else:
+                    lst.append(line)
+                    line = st
+                    last = False
+            # other files(green)
+            else:
+                st = selection_pointer(_file in selected__files)+color['reset' if filelist[currentIndex] == _file else 'green'] + "{0:<{mlen}}".format(_file, mlen=mlen)
+
+                if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
+                    line = line+ st
+                else:
+                    lst.append(line)
+                    line = st
+                    last = False
+            # append the last line to the list
+        if last:
+            lst.append(line)
+
+        print("\n".join(lst))
+        ###############################################################
+        print('mlen = ',mlen)
+        print('screen width',scr_width)
+        print('value of cols',cols)
+        print('no of columns',noOfColumns)
+        print(path)
+
+        k = getch().decode('UTF-8').lower()
+
+        if k == 'a':
+            if not currentIndex <= -1:
+                currentIndex -= 1
+            else:
+                currentIndex = len(filelist) -1
+        if k == 's':
+            if not currentIndex >= len(filelist)-1:
+                currentIndex += 1
+            else:
+                currentIndex = 0
+        if k == ' ':
+            if filelist[currentIndex] in selected__files:
+                selected__files.remove(filelist[currentIndex])
+            else:
+                selected__files.append(filelist[currentIndex])
+        if k == 'd':
+            return 'delete',selected__files,path
+        if k == 'c':
+            return 'copy',selected__files,path
+        if k == 'r':
+            return 'rename',selected__files,path
+        if k == 'e':
+            return 'change',filelist[currentIndex],path
+        if k == 'b':
+            return 'back',[],path
+        if k == 'm':
+            return 'move',selected__files,path
+        if k == 'w':
+            return 'make',[],path
+        if k == 'q':
+            return 'quit',[],path
+
+def file_explorer():
+    print(color['magenta'],'welcome to file explorer mode')
+    print(
+        "[a] Move backwards",
+        "[s] Move forwards",
+        "[ ] 'SPACE' to select or unselect"
+        "[d] Delete selected files or folders",
+        "[c] To copy files or folders",
+        "[m] To move files or folders",
+        "[r] Rename files or folders",
+        "[e] Enter a directory",
+        "[b] Navigate to previous directory",
+        "[w] Make files/ folders",
+        "[q] To quit File Explorer mode",
+        sep="\n"
+    )
+    print("Press ANY key to continue...")
+    getch()
+    path = os.getcwd()
+    while True:
+        o,files,path = interactive_show_dirs(path)
+        if o == 'delete':
+            oper_files = Interactive_operations(files)
+            oper_files.delete()
+        if o == 'copy':
+            oper_files = Interactive_operations(files)
+            oper_files.copy()
+        if o == 'rename':
+            oper_files = Interactive_operations(files)
+            oper_files.rename()
+        if o == 'change':
+            path = str(path) + os.sep + files
+            os.chdir(path)
+        if o == 'back':
+            i = str(path).rfind(os.sep)
+            path = path[0:i]
+            os.chdir(path)
+        if o == 'move':
+            oper_files = Interactive_operations(files)
+            oper_files.move()
+        if o == 'make':
+            oper_files = Interactive_operations.create()
+        if o == 'quit':
+            break
+    
+    print('Have a good day!!')
+
+
 # TODO: catch permission errors
 # TODO: add usage of a global variable to hold the path
 global_path = ""
