@@ -511,6 +511,7 @@ def select_op():
         " 5. Create new folder/s, file/s",
         " 6. Enter a directory",
         " 7. Enter navigation mode",
+        " 8. Enter File Explorer Mode",
         " 9. Change directory",
         "99. EXIT",
         sep="\n",
@@ -737,6 +738,8 @@ def main(path=os.getcwd()):
             filelist = os.listdir(path)
             filelist.sort(key=lambda x: x.lower())
             oper_files = Operations(filelist)
+        elif oprselection == 8:
+            file_explorer()
         elif oprselection == 9:
             directory_ask(True)
             show_dirs(os.getcwd())
