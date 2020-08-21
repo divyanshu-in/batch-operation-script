@@ -2,7 +2,7 @@
 import os
 import shutil
 import sys
-
+from getch import getch
 
 color = {
     "red": "\033[31m",  # for errors
