@@ -13,6 +13,9 @@ color = {
     "cyan": "\033[36m",
     "reset": "\033[0m",
 }
+def rich_text(style=0,text_color=37,background=40):
+    st = "\033[{style};{text_color};{background}m".format(style=style,text_color=text_color,background=background)
+    return st
 
 class Interactive_operations:
     def __init__(self,files):
@@ -137,8 +140,8 @@ class Interactive_operations:
                     print(color["red"] + "ERROR File already exists")
 
 def selection_pointer(isSelected):
-    temp = color['reset']+"["+color['green']+"{0:>{ind}}"+ color['reset'] + '] '
-    return temp.format("*" if isSelected else " ", ind=1)
+    temp = rich_text()+"["+(rich_text(1,32,42) if isSelected else rich_text(0,37,40))+"{0}"+rich_text()+"]"
+    return temp.format("*" if isSelected else " ")
 
 def interactive_show_dirs(path=os.getcwd()):
     """
@@ -182,7 +185,7 @@ def interactive_show_dirs(path=os.getcwd()):
             # directories(cyan)
             if os.path.isdir(path + os.sep + _file):
                 _fileM = _file + os.sep
-                st = selection_pointer(_file in selected__files)+color['reset' if filelist[currentIndex] == _file else 'cyan'] +"{0:<{mlen}}".format(_fileM,mlen=mlen)
+                st = selection_pointer(_file in selected__files)+ (rich_text(1,35,47) if filelist[currentIndex] == _file else rich_text(0,36,40)) +"{0:<{mlen}}".format(_fileM,mlen=mlen)+rich_text()
                 # st = "({0:>{ind}} {1:<{mlen}}".format(
                 #     str(count), _file, mlen=mlen, ind=ind
                 # )
@@ -195,7 +198,7 @@ def interactive_show_dirs(path=os.getcwd()):
             # executeable files(yellow)
             elif os.access(path + os.sep + _file, os.X_OK):
 
-                st = selection_pointer(_file in selected__files)+color['reset' if filelist[currentIndex] == _file else 'yellow'] + "{0:<{mlen}}".format(_file, mlen=mlen)
+                st = selection_pointer(_file in selected__files)+(rich_text(1,35,47) if filelist[currentIndex] == _file else rich_text(0,33,40)) + "{0:<{mlen}}".format(_file, mlen=mlen)+rich_text()
 
                 if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
                     line = line+ st
@@ -205,7 +208,7 @@ def interactive_show_dirs(path=os.getcwd()):
                     last = False
             # other files(green)
             else:
-                st = selection_pointer(_file in selected__files)+color['reset' if filelist[currentIndex] == _file else 'green'] + "{0:<{mlen}}".format(_file, mlen=mlen)
+                st = selection_pointer(_file in selected__files)+(rich_text(1,35,47) if filelist[currentIndex] == _file else rich_text(0,32,40)) + "{0:<{mlen}}".format(_file, mlen=mlen)+rich_text()
 
                 if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
                     line = line+ st
