@@ -17,6 +17,8 @@ def rich_text(style=0,text_color=37,background=40):
     st = "\033[{style};{text_color};{background}m".format(style=style,text_color=text_color,background=background)
     return st
 
+
+
 class Interactive_operations:
     def __init__(self,files):
         self.files = files
@@ -24,7 +26,7 @@ class Interactive_operations:
     def move(self):
         if not self.files:
             print(color["red"] + "ERROR No file selected")
-            return 0
+            return None
         tomove = self.files
         for i in tomove:
             path = input("where to move (path/same) >> ")
@@ -34,7 +36,7 @@ class Interactive_operations:
         while True:
             if not self.files:
                 print(color["red"] + "ERROR No file selected" + color["reset"])
-                break
+                return None
             print(color["yellow"])
             dont_over = (
                 input("Overwrite prexisting files [y]/n?").strip().lower()
@@ -71,11 +73,9 @@ class Interactive_operations:
 
     def delete(self):
         while True:
-            if len(self.files) is None:
+            if not self.files:
                 print(color["red"] + "ERROR No file selected" + color["reset"])
-                continue
-            if len(self.files) == -1:
-                break
+                return None
 
             todelete = self.files
             print(color["yellow"])
@@ -111,9 +111,9 @@ class Interactive_operations:
         return deleted
 
     def copy(self):
-        if self.files is None:
+        if not self.files:
             print(color["red"] + "ERROR No file selected")
-            return 0
+            return None
         tocopy = self.files
         for i in tocopy:
             path = str(input("where to copy (path/same) >> "))
@@ -139,18 +139,23 @@ class Interactive_operations:
                 else:
                     print(color["red"] + "ERROR File already exists")
 
+
+
+
 def selection_pointer(isSelected):
     temp = rich_text()+"["+(rich_text(1,32,42) if isSelected else rich_text(0,37,40))+"{0}"+rich_text()+"]"
     return temp.format("*" if isSelected else " ")
 
+
+
 def interactive_show_dirs(path=os.getcwd()):
     """
-    opens a terminal to use all operation sin an interactive way.
+    opens a terminal to use all operations in an interactive way.
 
     Parameters:
     path (str): Path of the directory (default = os.getcwd())
     """
-    print(color["blue"]+'Contents of the directory')
+
     filelist = os.listdir(path)
     filelist.sort(key=lambda x: x.lower())
 
@@ -167,8 +172,6 @@ def interactive_show_dirs(path=os.getcwd()):
         mlen = 1
     cols = scr_width // mlen
     
-    noOfColumns = scr_width // (mlen + 5)
-    
     if scr_width < mlen:
         mlen = scr_width
 
@@ -177,24 +180,25 @@ def interactive_show_dirs(path=os.getcwd()):
 
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
+
         ####################### DISPLAYING FILES ######################
         line = ""
         lst = []
         for _file in filelist:
             last = True  # last line
+
             # directories(cyan)
             if os.path.isdir(path + os.sep + _file):
                 _fileM = _file + os.sep
                 st = selection_pointer(_file in selected__files)+ (rich_text(1,35,47) if filelist[currentIndex] == _file else rich_text(0,36,40)) +"{0:<{mlen}}".format(_fileM,mlen=mlen)+rich_text()
-                # st = "({0:>{ind}} {1:<{mlen}}".format(
-                #     str(count), _file, mlen=mlen, ind=ind
-                # )
+
                 if scr_width - (abs(len(line) - cols * 5) % scr_width) > len(st):
                     line = line + st
                 else:
                     lst.append(line)
                     line = st
                     last = False
+
             # executeable files(yellow)
             elif os.access(path + os.sep + _file, os.X_OK):
 
@@ -206,6 +210,7 @@ def interactive_show_dirs(path=os.getcwd()):
                     lst.append(line)
                     line = st
                     last = False
+
             # other files(green)
             else:
                 st = selection_pointer(_file in selected__files)+(rich_text(1,35,47) if filelist[currentIndex] == _file else rich_text(0,32,40)) + "{0:<{mlen}}".format(_file, mlen=mlen)+rich_text()
@@ -217,16 +222,14 @@ def interactive_show_dirs(path=os.getcwd()):
                     line = st
                     last = False
             # append the last line to the list
+
         if last:
             lst.append(line)
 
         print("\n".join(lst))
         ###############################################################
-        print('mlen = ',mlen)
-        print('screen width',scr_width)
-        print('value of cols',cols)
-        print('no of columns',noOfColumns)
-        print(path)
+
+        print(color["magenta"],"\nPATH->",color["blue"],path,color["reset"])
 
         if os.name == 'nt':
             k = getch().decode('UTF-8').lower()
@@ -264,6 +267,8 @@ def interactive_show_dirs(path=os.getcwd()):
             return 'make',[],path
         if k == 'q':
             return 'quit',[],path
+
+
 
 def file_explorer():
     print(color['magenta'],'welcome to file explorer mode')
@@ -311,6 +316,8 @@ def file_explorer():
             break
     
     print('Have a good day!!')
+
+
 
 
 # TODO: catch permission errors

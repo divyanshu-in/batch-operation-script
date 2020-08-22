@@ -39,36 +39,4 @@ class _GetchWindows:
         import msvcrt
         return msvcrt.getch()
 
-color = {
-    "red": "\033[31m",  # for errors
-    "green": "\033[32m",
-    "yellow": "\033[33m",  # for input
-    "blue": "\033[34m",  # for indication
-    "magenta": "\033[35m",
-    "cyan": "\033[36m",
-    "reset": "\033[0m",
-}
-
-
 getch = _Getch()
-
-# if __name__ == '__main__':
-#     print('press a key')
-#     k = getch().decode('UTF-8')
-#     selected = False
-#     while k == ' ':
-#         os.system('cls' if os.name == 'nt' else 'clear')
-#         if selected:
-#             print(color['yellow'],'(',color['green'],'*',color['yellow'],')',sep='')
-#         else:
-#             print('( )')
-        
-#         selected = not selected
-#         k = getch().decode('UTF-8')
-#     print(color['reset'])
-
-
-# if __name__ == '__main__':
-#     print('press a key')
-#     k = getch().decode('UTF-8')
-#     print(k)
