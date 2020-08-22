@@ -150,16 +150,6 @@ def interactive_show_dirs(path=os.getcwd()):
     print(color["blue"]+'Contents of the directory')
     filelist = os.listdir(path)
     filelist.sort(key=lambda x: x.lower())
-    # index padding
-    # ind = len(filelist)
-    # if ind >= 1000:
-    #     ind = 4
-    # elif ind >= 100:
-    #     ind = 3
-    # elif ind >= 10:
-    #     ind = 2
-    # else:
-    #     ind = 1
 
     scr_width = int(os.get_terminal_size()[0])
     try:
@@ -235,7 +225,10 @@ def interactive_show_dirs(path=os.getcwd()):
         print('no of columns',noOfColumns)
         print(path)
 
-        k = getch().decode('UTF-8').lower()
+        if os.name == 'nt':
+            k = getch().decode('UTF-8').lower()
+        else:
+            k = getch().lower()
 
         if k == 'a':
             if not currentIndex <= -1:
